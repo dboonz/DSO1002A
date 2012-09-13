@@ -61,6 +61,23 @@ def calculateTimeBase(datalength):
   return t
 
 
+def updatePlot():
+  """ Update the figure """
+  #TODO : unchecked
+  plot.clf()
+  try :
+  plot.plot(t,ch1)
+  plot.plot(t,ch2)
+  except :
+    print "t, ch1 ", t1.size , ', ', ch1.size
+    print "t, ch2 ", t2.size , ', ', ch2.size
+
+
+  plot.title("Oscilloscope data")
+  plot.ylabel("Voltage (V)")
+  plot.ylabel("Voltage (V)")
+  plot.xlabel("Time (s)")
+  plot.draw()
 
 
 
@@ -72,6 +89,8 @@ def calculateTimeBase(datalength):
 if __name__ == '__main__':
   #TODO : rename RigolScope
   scope = instrument.RigolScope("/dev/usbtmc0")
+  # initialize plot
+  plot.ion()
 
   while True :
     print "Acquiring Measurement"
@@ -82,8 +101,8 @@ if __name__ == '__main__':
     print "Saving channel 2"
     ch2 = captureWaveForm(2)
     print "Calculating X axis"
-    calculateTimeBase(len(ch1))
+    t = calculateTimeBase(len(ch1))
    # print "Updating plot"
-   # updatePlot()
+   # updatePlot(t,ch1,ch2)
 
 # add ridiculous commeniiiiiAdd ridiculous commentt

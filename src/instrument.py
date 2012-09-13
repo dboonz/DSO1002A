@@ -1,5 +1,5 @@
 import os
-
+# bla
 class usbtmc:
     """Simple implementation of a USBTMC device driver, in the style of visa.h"""
 

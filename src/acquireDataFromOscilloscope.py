@@ -105,4 +105,3 @@ if __name__ == '__main__':
    # print "Updating plot"
    # updatePlot(t,ch1,ch2)
 
-# add ridiculous commeniiiiiAdd ridiculous commentt

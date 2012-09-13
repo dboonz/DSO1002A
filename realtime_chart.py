@@ -1,11 +1,25 @@
 #!/usr/bin/python
 import numpy
 import matplotlib.pyplot as plot
-
+from time import sleep
 import instrument
 
 
 """ Example program to plot the Y-T data from Channel 1"""
+
+def startAndStopBlocking():
+  " Start and stop the osciloscope in a blocking fashion"
+  test.write(":RUN")
+  # check if the oscilloscope is done
+  while(True):
+    test.write("*OPC?")
+    if(int(test.read(100).strip()) == 0):
+      sleep(0.01)
+      print "Waiting another 100ms"
+    else :
+      print "Stopped waiting"
+      break
+    print "Continuing"
 
 def getChannelData(channel):
     if (channel==1):
@@ -17,9 +31,12 @@ def getChannelData(channel):
         return
 
     # Grab the data from channel 1
-    test.write(":WAV:POIN:MODE NOR")
+    #
+    startAndStopBlocking()
+    test.write(":WAV:POIN:MODE NORM")
 
     test.write(":WAV:DATA? " + channelName)
+#    sleep(0.005)
     rawdata = test.read(9000)
     data = numpy.frombuffer(rawdata, 'B')
 
@@ -28,12 +45,14 @@ def getChannelData(channel):
     voltscale = float(test.read(20))
 
     # And the voltage offset
+
     test.write(":" + channelName + ":OFFS?")
     voltoffset = float(test.read(20))
 
     # Walk through the data, and map it to actual voltages
     # First invert the data (ya rly)
     data = data * -1 + 255
+
 
     # Now, we know from experimentation that the scope display range is actually
     # 30-229.  So shift by 130 - the voltage offset in counts, then scale to
@@ -53,8 +72,11 @@ def getChannelData(channel):
     time = numpy.arange(-300.0/50*timescale, 300.0/50*timescale, timescale/50.0)
 
     # If we generated too many points due to overflow, crop the length of time.
+    if (data.size > 600):
+      data = data[0:600]
     if (time.size > data.size):
         time = time[0:600:1]
+
 
     # See if we should use a different time axis
 #    if (time[599] < 1e-3):
@@ -78,12 +100,18 @@ while 1:
     t2, d2 = getChannelData(2)
 
     # Start data acquisition again, and put the scope back in local mode
-    test.write(":KEY:FORC")
+    test.write(":KEY:LOCK DIS")
 
     # Plot the data
     plot.clf()
-    plot.plot(t1, d1)
-    plot.plot(t2, d2)
+    try :
+      plot.plot(t1, d1)
+      plot.plot(t2, d2)
+    except : 
+      print "ERROR PLOTTING"
+      print "t1, d1 ", t1.size , ', ', d1.size
+      print "t2, d2 ", t2.size , ', ', d2.size
+
     plot.title("Oscilloscope data")
     plot.ylabel("Voltage (V)")
     plot.xlabel("Time (s)")

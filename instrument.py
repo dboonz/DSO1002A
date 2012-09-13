@@ -5,11 +5,16 @@ class usbtmc:
 
     def __init__(self, device):
         self.device = device
-        self.FILE = os.open(device, os.O_RDWR)
+        self.FILE = os.open(device, os.O_RDWR,int(1024*1024))
 
         # TODO: Test that the file opened
 
     def write(self, command):
+        # check if any errors were found previously
+        os.write(self.FILE, ":SYST:ERR?")
+        if(int(os.read(self.FILE, 500)[0] ) != 0):
+          print "Error before command %s", command
+        # write the command
         os.write(self.FILE, command);
 
     def read(self, length = 4000):
@@ -43,4 +48,9 @@ class RigolScope:
     def reset(self):
         """Reset the instrument"""
         self.meas.sendReset()
+
+    def ask(self,command):
+        """ Ask a question, should be short"""
+        self.write(command)
+        return self.read(6000)
 

@@ -1,7 +1,8 @@
+
 #!/usr/bin/python
 import numpy
 import matplotlib.pyplot as plot
- 
+import time 
 import instrument
  
 """ Example program to plot the Y-T data from Channel 1"""
@@ -11,9 +12,15 @@ test = instrument.RigolScope("/dev/usbtmc0")
  
 # Stop data acquisition
 test.write(":STOP")
- 
+# start a single acquisition
+#
+test.write(":SINGLE")
+# wait to complete
+time.sleep(1)
+
 # Grab the data from channel 1
 test.write(":WAV:POIN:MODE NOR")
+test.write(":WAV:POIN 600")
  
 test.write(":WAV:DATA? CHAN1")
 rawdata = test.read(9000)
@@ -49,6 +56,12 @@ timeoffset = float(test.read(20))
 time = numpy.arange(-300.0/50*timescale, 300.0/50*timescale, timescale/50.0)
  
 # If we generated too many points due to overflow, crop the length of time.
+print "time size: " ,time.size
+print "data size: " , data.size
+
+if (data.size > 600):
+  data = data[0:600:1]
+
 if (time.size > data.size):
     time = time[0:600:1]
  

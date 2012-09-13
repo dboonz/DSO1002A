@@ -1,0 +1,36 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+RigolScope	instrument.py	/^class RigolScope:$/;"	c
+__init__	instrument.py	/^    def __init__(self, device):$/;"	m	class:RigolScope
+__init__	instrument.py	/^    def __init__(self, device):$/;"	m	class:usbtmc
+data	capture_channel_1.py	/^  data = data[0:600:1]$/;"	v
+data	capture_channel_1.py	/^data = (data - 130.0 - voltoffset\/voltscale*25) \/ 25 * voltscale$/;"	v
+data	capture_channel_1.py	/^data = data * -1 + 255$/;"	v
+data	capture_channel_1.py	/^data = numpy.frombuffer(rawdata, 'B')$/;"	v
+getChannelData	realtime_chart.py	/^def getChannelData(channel):$/;"	f
+getName	instrument.py	/^    def getName(self):$/;"	m	class:usbtmc
+rawdata	capture_channel_1.py	/^rawdata = test.read(9000)$/;"	v
+read	instrument.py	/^    def read(self, command):$/;"	m	class:RigolScope
+read	instrument.py	/^    def read(self, length = 4000):$/;"	m	class:usbtmc
+reset	instrument.py	/^    def reset(self):$/;"	m	class:RigolScope
+sendReset	instrument.py	/^    def sendReset(self):$/;"	m	class:usbtmc
+tUnit	capture_channel_1.py	/^    tUnit = "S"$/;"	v
+tUnit	capture_channel_1.py	/^    tUnit = "mS"$/;"	v
+tUnit	capture_channel_1.py	/^    tUnit = "uS"$/;"	v
+test	capture_channel_1.py	/^test = instrument.RigolScope("\/dev\/usbtmc0")$/;"	v
+test	realtime_chart.py	/^test = instrument.RigolScope("\/dev\/usbtmc0")$/;"	v
+time	capture_channel_1.py	/^    time = time * 1e3$/;"	v
+time	capture_channel_1.py	/^    time = time * 1e6$/;"	v
+time	capture_channel_1.py	/^    time = time[0:600:1]$/;"	v
+time	capture_channel_1.py	/^time = numpy.arange(-300.0\/50*timescale, 300.0\/50*timescale, timescale\/50.0)$/;"	v
+timeoffset	capture_channel_1.py	/^timeoffset = float(test.read(20))$/;"	v
+timescale	capture_channel_1.py	/^timescale = float(test.read(20))$/;"	v
+usbtmc	instrument.py	/^class usbtmc:$/;"	c
+voltoffset	capture_channel_1.py	/^voltoffset = float(test.read(20))$/;"	v
+voltscale	capture_channel_1.py	/^voltscale = float(test.read(20))$/;"	v
+write	instrument.py	/^    def write(self, command):$/;"	m	class:RigolScope
+write	instrument.py	/^    def write(self, command):$/;"	m	class:usbtmc

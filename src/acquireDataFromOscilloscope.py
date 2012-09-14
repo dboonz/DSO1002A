@@ -37,18 +37,22 @@ def captureWaveForm(channel):
   time.sleep(0.2)
   rawdata = scope.read(int(1e4))
 
-  data = np.frombuffer(rawdata, 'B')
+  data = np.frombuffer(rawdata[10:610], 'B')
 #  print "data" , data[10:15]
   # now we need to rescale the data
   yinc = float(scope.ask(":WAV:YINC?"))
-  yoffset  = float(scope.ask(":WAV:YOR?"))
+  yor  = float(scope.ask(":WAV:YOR?"))
+  yref = float(scope.ask(":WAV:YREF?"))
+  props = {}
+  props["inverted"] = int(scope.ask(channelName+":INV?"))
+  props["yinc"] = yinc
+  props["yor"] = yor
+  props["yref"] = yref
+
   
-  print "Yinc : " , yinc
-  print "Yoff px: ", yoffset / yinc + 100
-  data = 100 - data  # centered at the origin, positive going up
-  data = data * yinc + -yoffset #- yoffset
+  data = (yref - data) * yinc - yor  # see page 285 in manual
   print data[100:110]
-  return data
+  return data, props
 
 
 def calculateTimeBase(datalength):
@@ -61,22 +65,39 @@ def calculateTimeBase(datalength):
   return t
 
 
-def updatePlot():
+def updatePlot(t,ch1,ch2,props1=None,props2=None):
   """ Update the figure """
   #TODO : unchecked
   plot.clf()
+  ch1label = 'ch1'
+  ch2label = 'ch2'
+  if(props1 is not None):
+    print "Props found"
+    # check if the channel was inverted
+    if(props1["inverted"] ):
+      ch1label += ' (inverted)'
+  if(props2 is not None):
+    print "Props found"
+    # check if the channel was inverted
+    if(props2["inverted"] ):
+      ch2label += ' (inverted)'
+      
+      
+      
   try :
-  plot.plot(t,ch1)
-  plot.plot(t,ch2)
+    
+    plot.plot(t,ch1,label=ch1label)
+    plot.plot(t,ch2,label='ch2')
   except :
-    print "t, ch1 ", t1.size , ', ', ch1.size
-    print "t, ch2 ", t2.size , ', ', ch2.size
+    print "t, ch1 ", t.size , ', ', ch1.size
+    print "t, ch2 ", t.size , ', ', ch2.size
 
 
   plot.title("Oscilloscope data")
   plot.ylabel("Voltage (V)")
   plot.ylabel("Voltage (V)")
   plot.xlabel("Time (s)")
+  plot.legend()
   plot.draw()
 
 
@@ -97,11 +118,16 @@ if __name__ == '__main__':
     performMeasurement()
     print "\n\nNew Measurement."
     print "Saving channel 1"
-    ch1 = captureWaveForm(1)
+    ch1, props1 = captureWaveForm(1)
+    print "Props" 
+    print props1
     print "Saving channel 2"
-    ch2 = captureWaveForm(2)
-    print "Calculating X axis"
+    ch2, props2 = captureWaveForm(2)
+
+    # print some statistics for debugging
     t = calculateTimeBase(len(ch1))
-   # print "Updating plot"
-   # updatePlot(t,ch1,ch2)
+    print "Updating plot"
+    updatePlot(t,ch1,ch2,props1,props2)
+    # save the data
+#    saveData(t,ch1,ch2)
 

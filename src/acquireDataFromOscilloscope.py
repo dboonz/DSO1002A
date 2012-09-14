@@ -33,7 +33,6 @@ def captureWaveForm(channel):
     #TODO : This should be in the driver
     raise BaseError("Invalid Channel!")
   scope.write("WAV:DATA? " + channelName)
-  # TODO : maybe insert delay?
   time.sleep(0.2)
   rawdata = scope.read(int(1e4))
 
@@ -67,7 +66,6 @@ def calculateTimeBase(datalength):
 
 def updatePlot(t,ch1,ch2,props1=None,props2=None):
   """ Update the figure """
-  #TODO : unchecked
   plot.clf()
   ch1label = 'ch1'
   ch2label = 'ch2'
@@ -101,6 +99,21 @@ def updatePlot(t,ch1,ch2,props1=None,props2=None):
   plot.draw()
 
 
+def saveData(t,ch1,ch2):
+  'saves the setup of the oscilloscope and the resulted frames'
+  # first get all the settings of the oscilloscope
+  scopesettings = scope.ask('*LRN?')
+  fsettings = open('out.settings','wb')
+  fsettings.write(scopesettings)
+  fsettings.close()
+
+  print scopesettings
+
+  data = np.array([t,ch1,ch2]).transpose()
+  np.savetxt('out.scope',data)
+
+  
+
 
 
 
@@ -110,6 +123,9 @@ def updatePlot(t,ch1,ch2,props1=None,props2=None):
 if __name__ == '__main__':
   #TODO : rename RigolScope
   scope = instrument.RigolScope("/dev/usbtmc0")
+  # initialize with old settings DOES NOT WORK
+#  scope.write(open('out.settings').readline())
+
   # initialize plot
   plot.ion()
 
@@ -129,5 +145,5 @@ if __name__ == '__main__':
     print "Updating plot"
     updatePlot(t,ch1,ch2,props1,props2)
     # save the data
-#    saveData(t,ch1,ch2)
+    saveData(t,ch1,ch2)
 
